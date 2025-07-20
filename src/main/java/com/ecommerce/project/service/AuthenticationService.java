@@ -1,14 +1,17 @@
 package com.ecommerce.project.service;
 
-import com.ecommerce.project.dto.user.LoginUserDto;
-import com.ecommerce.project.dto.user.RegisterUserDto;
-import com.ecommerce.project.model.User;
-import com.ecommerce.project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.ecommerce.project.dto.user.LoginUserDto;
+import com.ecommerce.project.dto.user.RegisterUserDto;
+import com.ecommerce.project.model.User;
+import com.ecommerce.project.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class AuthenticationService {
@@ -36,6 +39,7 @@ public class AuthenticationService {
     }
 
     public  User authenticate (LoginUserDto input){
+        User user = userRepository.findByEmail(input.getEmail()).orElseThrow(() -> new EntityNotFoundException("User nout found with giivin email"));
         authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(input.getEmail() , input.getPassword()));
         return userRepository.findByEmail(input.getEmail())
                 .orElseThrow();

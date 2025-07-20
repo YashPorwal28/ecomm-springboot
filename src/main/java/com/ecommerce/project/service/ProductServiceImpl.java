@@ -7,6 +7,8 @@ import com.ecommerce.project.model.Product;
 import com.ecommerce.project.repository.CategoryRepository;
 import com.ecommerce.project.repository.ProductsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,5 +43,12 @@ public class ProductServiceImpl implements ProductsService {
         savedProduct.getProductTitle(),
         savedProduct.getPrice(),
         savedProduct.getCategory().getCategoryName());
+  }
+
+  @Override
+  public Page<ProductResponse> getAllProducts(Pageable pageable) {
+    Page<Product> products = productsRepository.findAll(pageable);
+    return products
+        .map(product -> new ProductResponse(product.getProductTitle(), product.getPrice(), product.getCategory().getCategoryName()));
   }
 }
